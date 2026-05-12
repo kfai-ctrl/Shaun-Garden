@@ -1,208 +1,858 @@
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Shaun Garden Hidroponik 🌱</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
+
         :root {
+
             --bg-cream: #f6f3e4;
+
             --garden-green: #67a37b;
+
             --garden-green-dark: #4a7a5a;
+
             --soft-green: #e9f5db;
+
             --white: #ffffff;
+
             --text-dark: #2d4a22;
+
             --accent-yellow: #fdbd33;
+
             --radius: 25px;
+
         }
+
+
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+
+
         body {
+
             font-family: 'Nunito', sans-serif;
+
             background-color: var(--bg-cream);
+
             color: var(--text-dark);
+
             min-height: 100vh;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             overflow-x: hidden;
+
             padding-bottom: 350px; /* Space for barn illustration */
+
         }
+
+
 
         /* ===== HEADER SECTION ===== */
+
         .header-container {
+
             margin-top: 40px;
+
             position: relative;
+
             text-align: center;
+
             margin-bottom: 40px;
+
         }
+
         .logo-box {
+
             background-color: var(--garden-green);
+
             color: white;
+
             padding: 12px 60px;
+
             border-radius: 60px;
+
             border: 5px solid #417d56;
+
             font-size: 2.8rem;
+
             font-weight: 900;
+
             display: inline-block;
+
             box-shadow: 0 4px 0px #326143;
-            position: relative;
-            z-index: 2;
+
         }
 
-        /* ===== ANIMASI GAMBAR SHAUN BARU ===== */
-        .shaun-img-animated {
+        .shaun-img {
+
             position: absolute;
-            right: -80px; /* Posisi di sebelah kanan logo */
-            top: -60px;   /* Posisi di atas logo */
-            width: 140px; /* Ukuran gambar */
+
+            right: -65px;
+
+            top: -15px;
+
+            width: 110px;
+
             z-index: 5;
-            pointer-events: none;
-            /* Memanggil animasi */
-            animation: floating 3s ease-in-out infinite;
+
         }
 
-        /* Keyframes untuk animasi naik turun */
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); } /* Naik 20 pixel */
-            100% { transform: translateY(0px); }
-        }
+
 
         /* ===== MAIN LAYOUT ===== */
+
         .wrapper {
+
             width: 95%;
+
             max-width: 1200px;
+
             display: grid;
+
             grid-template-columns: 2.2fr 1fr;
+
             gap: 20px;
+
             z-index: 10;
+
         }
+
+
 
         .glass-card {
+
             background: rgba(255, 255, 255, 0.7);
+
             border: 1.5px solid rgba(255,255,255,0.9);
+
             border-radius: var(--radius);
+
             padding: 25px;
+
             box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+
         }
+
+
 
         .section-label {
+
             font-weight: 800;
+
             font-size: 1.3rem;
+
             margin-bottom: 20px;
+
             display: flex;
+
             align-items: center;
+
             gap: 12px;
+
         }
+
+
 
         /* ===== SENSOR CARDS ===== */
+
         .sensor-grid {
+
             display: grid;
+
             grid-template-columns: repeat(3, 1fr);
+
             gap: 15px;
+
         }
+
         .sensor-item {
+
             background: var(--white);
+
             border-radius: 20px;
+
             padding: 20px;
+
             border: 1px solid #e0e0e0;
+
             position: relative;
+
             overflow: hidden;
+
             min-height: 200px;
+
             display: flex;
+
             flex-direction: column;
+
         }
+
         .sensor-item::after {
+
             content: '';
+
             position: absolute;
+
             top: 0; right: 0;
+
             width: 80px; height: 80px;
+
             background: #e1eed4;
+
             border-radius: 0 0 0 100%;
+
             z-index: 1;
+
         }
+
         .sensor-header {
+
             font-size: 0.85rem;
+
             font-weight: 800;
+
             color: var(--garden-green-dark);
+
             margin-bottom: 15px;
+
             display: flex;
+
             align-items: center;
+
             gap: 6px;
+
             position: relative;
+
             z-index: 2;
+
         }
+
         .sensor-emoji { font-size: 2rem; margin: 10px 0; }
+
         .sensor-value {
+
             font-size: 2.2rem;
+
             font-weight: 900;
+
             margin-top: auto;
+
             margin-bottom: 15px;
+
             color: #4a7a5a;
+
         }
+
         .sensor-unit { font-size: 1rem; font-weight: 700; color: #777; margin-left: 4px; }
+
         .sensor-footer {
+
             font-size: 0.7rem;
+
             color: #888;
+
             border-top: 1px solid #f0f0f0;
+
             padding-top: 8px;
+
             line-height: 1.3;
+
         }
+
+
 
         /* ===== RIGHT PANEL CONTROLS ===== */
+
         .control-panel { display: flex; flex-direction: column; gap: 20px; }
+
         .status-box { text-align: center; }
+
         .bolt-icon {
+
             font-size: 4.5rem;
+
             color: var(--accent-yellow);
+
             margin: 20px 0;
+
             filter: drop-shadow(0 0 8px rgba(253, 189, 51, 0.4));
+
         }
+
         .relay-title { font-weight: 900; font-size: 1.4rem; letter-spacing: 1px; }
+
         .relay-desc { font-size: 0.75rem; color: #888; margin-top: 10px; }
 
+
+
         .btn-group { display: flex; gap: 12px; margin-top: 25px; }
+
         .btn-action {
+
             flex: 1;
+
             padding: 16px;
+
             border: none;
+
             border-radius: 15px;
+
             font-weight: 900;
+
             font-size: 1rem;
+
             cursor: pointer;
+
             transition: all 0.2s;
+
         }
+
         .btn-on { background-color: var(--garden-green); color: white; }
+
         .btn-off { background-color: #e2e2e2; color: #666; }
+
         .btn-action:active { transform: scale(0.95); }
 
+
+
         /* ===== SYSTEM CONFIG (HIDDEN) ===== */
+
         .config-toggle {
+
             position: fixed; top: 15px; left: 15px; z-index: 1000;
+
             background: #fff; border: 2px solid var(--garden-green);
+
             padding: 8px; border-radius: 10px; cursor: pointer;
+
         }
+
         #config-menu {
+
             display: none; position: fixed; top: 60px; left: 15px;
+
             background: white; padding: 20px; border-radius: 15px;
+
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1000; width: 280px;
+
         }
+
         input { width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; }
 
+
+
         /* ===== FARM DECORATION ===== */
+
         .farm-footer {
+
             position: fixed; bottom: 0; width: 100%; height: 320px;
+
             z-index: 1; pointer-events: none;
+
         }
+
         .barn {
+
             position: absolute; bottom: 75px; left: 50%;
+
             transform: translateX(-50%); width: 200px; z-index: 4;
+
         }
+
         .grass-layer { position: absolute; bottom: 0; width: 100%; height: 140px; background: #86bc42; z-index: 2; border-radius: 50% 50% 0 0 / 30px 30px 0 0; }
+
         .fence { position: absolute; bottom: 50px; width: 100%; height: 70px; background-image: repeating-linear-gradient(90deg, #96613d, #96613d 12px, transparent 12px, transparent 25px); border-top: 10px solid #7a4a2d; z-index: 3; }
-        .road { position: absolute
+
+        .road { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 400px; height: 140px; background: #eed18b; clip-path: polygon(25% 100%, 75% 100%, 55% 0, 45% 0); z-index: 3; }
+
+
+
+        /* Status Badge */
+
+        .badge-status { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 5px; }
+
+        .badge { background: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid #ddd; }
+
+        .badge.online { color: green; border-color: green; }
+
+
+
+        @media (max-width: 900px) {
+
+            .wrapper { grid-template-columns: 1fr; }
+
+            .sensor-grid { grid-template-columns: 1fr; }
+
+            body { padding-bottom: 400px; }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="badge-status">
+
+    <div class="badge" id="status-bt">BT Offline</div>
+
+    <div class="badge" id="status-fb">DB Offline</div>
+
+</div>
+
+
+
+<button class="config-toggle" onclick="toggleSettings()">⚙️ Settings</button>
+
+
+
+<div id="config-menu">
+
+    <label>Firebase API Key</label>
+
+    <input type="password" id="fb-apiKey">
+
+    <label>Database URL</label>
+
+    <input type="text" id="fb-dbUrl">
+
+    <button class="btn-action btn-on" id="btn-connect-fb" style="padding: 8px; margin-top: 10px;">Connect Cloud</button>
+
+    <hr style="margin: 10px 0;">
+
+    <button class="btn-action btn-on" id="btn-connect-ble" style="padding: 8px;">Connect Micro:bit</button>
+
+    <div id="terminalLog" style="font-size: 9px; height: 60px; overflow-y: auto; background: #eee; margin-top: 10px; padding: 5px; font-family: 'Space Mono';"></div>
+
+</div>
+
+
+
+<div class="header-container">
+
+    <div class="logo-box">Shaun garden</div>
+
+    <img src="https://raw.githubusercontent.com/Aris-Setyawan/shaun-assets/main/shaun-icon.png" class="shaun-img" alt="Shaun">
+
+</div>
+
+
+
+<div class="wrapper">
+
+    <div class="glass-card">
+
+        <div class="section-label"><i class="fas fa-seedling" style="color: #4a7a5a;"></i> Live Sensor Data</div>
+
+        <div class="sensor-grid">
+
+            <div class="sensor-item">
+
+                <div class="sensor-header"><i class="fas fa-tint" style="color: #3a86ff;"></i> Ultrasonik 1 - P0 / P1</div>
+
+                <div class="sensor-emoji">💧</div>
+
+                <div class="sensor-value" id="val-jarak">--<span class="sensor-unit">cm</span></div>
+
+                <div class="sensor-footer">Pompa Relay ON jika jarak ≥ 30 cm</div>
+
+            </div>
+
+
+
+            <div class="sensor-item">
+
+                <div class="sensor-header"><i class="fas fa-water" style="color: #0077b6;"></i> Ultrasonik 2 - P3 / P8</div>
+
+                <div class="sensor-emoji">🌊</div>
+
+                <div class="sensor-value" id="val-jarak-manual">--<span class="sensor-unit">cm</span></div>
+
+                <div class="sensor-footer">Monitoring level air ember - tidak kontrol aktuator</div>
+
+            </div>
+
+
+
+            <div class="sensor-item">
+
+                <div class="sensor-header"><i class="fas fa-thermometer-half" style="color: #e63946;"></i> DHT22 - SUHU / HUMIDITY</div>
+
+                <div class="sensor-emoji">🌡️</div>
+
+                <div class="sensor-value" style="font-size: 1.6rem;">
+
+                    <span id="val-temp">--</span>°C <span id="val-hum">--</span>%
+
+                </div>
+
+                <div class="sensor-footer">Monitoring suhu dan kelembapan lingkungan</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="control-panel">
+
+        <div class="glass-card status-box">
+
+            <div class="section-label" style="justify-content: center;"><i class="fas fa-bolt"></i> STATUS POMPA</div>
+
+            <div class="bolt-icon"><i class="fas fa-bolt"></i></div>
+
+            <div class="relay-title" id="lbl-relay">RELAY OFF</div>
+
+            <div class="relay-desc">Pin P13 - Untuk mengontrol nyala dan matinya pompa secara otomatis/manual.</div>
+
+        </div>
+
+
+
+        <div class="glass-card status-box">
+
+            <div class="section-label" style="justify-content: center;"><i class="fas fa-tools"></i> MANUAL CONTROL</div>
+
+            <p style="font-size: 0.85rem; font-weight: 700;">Kontrol pompa secara manual</p>
+
+            <div class="btn-group">
+
+                <button class="btn-action btn-on" onclick="window.manualRelay(1)">ON</button>
+
+                <button class="btn-action btn-off" onclick="window.manualRelay(0)">OFF</button>
+
+            </div>
+
+            <input type="checkbox" id="sw-relay" style="display:none;">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="farm-footer">
+
+    <div class="barn">
+
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+
+            <path d="M20,180 L20,80 L100,20 L180,80 L180,180 Z" fill="#cf2e2e" stroke="#222" stroke-width="2"/>
+
+            <rect x="75" y="110" width="50" height="70" fill="#fff" stroke="#222" stroke-width="2"/>
+
+            <line x1="75" y1="110" x2="125" y2="180" stroke="#cf2e2e" stroke-width="2"/>
+
+            <line x1="125" y1="110" x2="75" y2="180" stroke="#cf2e2e" stroke-width="2"/>
+
+            <rect x="85" y="45" width="30" height="25" fill="#fbd333" stroke="#222" stroke-width="2"/>
+
+        </svg>
+
+    </div>
+
+    <div class="road"></div>
+
+    <div class="fence"></div>
+
+    <div class="grass-layer"></div>
+
+</div>
+
+
+
+<script type="module">
+
+    // LOGIKA TETAP SAMA DENGAN FILE ASLI
+
+    import { initializeApp, getApps, deleteApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+
+    import { getDatabase, ref, onValue, update, set } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+
+
+    const state = {
+
+        db: null, path: "smarthome/ruangan1",
+
+        device: null, txChar: null, rxChar: null,
+
+        bleConnected: false, bleBuffer: "",
+
+        modeOtomatis: 1
+
+    };
+
+
+
+    const $ = id => document.getElementById(id);
+
+
+
+    function log(msg, color = "#000") {
+
+        const t = new Date().toLocaleTimeString();
+
+        $('terminalLog').insertAdjacentHTML('afterbegin', `<div style="color:${color}">[${t}] ${msg}</div>`);
+
+    }
+
+
+
+    window.toggleSettings = () => {
+
+        const m = $('config-menu');
+
+        m.style.display = m.style.display === 'block' ? 'none' : 'block';
+
+    }
+
+
+
+    // Update UI Relay sesuai Logic Asli
+
+    function updateRelayUI(isOn) {
+
+        const lbl = $('lbl-relay');
+
+        const icon = document.querySelector('.bolt-icon');
+
+        lbl.textContent = isOn ? 'RELAY ON' : 'RELAY OFF';
+
+        lbl.style.color = isOn ? '#16a34a' : '#666';
+
+        icon.style.color = isOn ? 'var(--accent-yellow)' : '#ddd';
+
+        $('sw-relay').checked = isOn;
+
+    }
+
+
+
+    // Logic Manual Control (tetap panggil BLE & Firebase)
+
+    window.manualRelay = (val) => {
+
+        updateRelayUI(val === 1);
+
+        sendBLE("Relay", val);
+
+        if (state.db) update(ref(state.db, `${state.path}/relay`), { value: val });
+
+        log(`Manual Relay -> ${val ? 'ON' : 'OFF'}`, "orange");
+
+    };
+
+
+
+    // Sensor UI Updates
+
+    function updateSensorUI(key, val) {
+
+        const el = $(`val-${key}`);
+
+        if (!el) return;
+
+        if (key === 'temp' || key === 'hum') {
+
+            el.textContent = val;
+
+        } else {
+
+            el.innerHTML = `${val}<span class="sensor-unit">cm</span>`;
+
+        }
+
+    }
+
+
+
+    // --- Bluetooth Logic (Sama Persis) ---
+
+    const SVC = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+
+    const TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+
+    const RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+
+
+
+    async function connectBLE() {
+
+        try {
+
+            log("Scanning...", "blue");
+
+            state.device = await navigator.bluetooth.requestDevice({
+
+                filters: [{ namePrefix: "BBC micro:bit" }],
+
+                optionalServices: [SVC]
+
+            });
+
+            const server = await state.device.gatt.connect();
+
+            const service = await server.getPrimaryService(SVC);
+
+            state.txChar = await service.getCharacteristic(TX);
+
+            state.rxChar = await service.getCharacteristic(RX);
+
+            await state.txChar.startNotifications();
+
+            state.txChar.addEventListener("characteristicvaluechanged", (e) => {
+
+                let arr = [];
+
+                for (let i = 0; i < e.target.value.byteLength; i++) arr.push(e.target.value.getUint8(i));
+
+                state.bleBuffer += String.fromCharCode.apply(null, arr);
+
+                const lines = state.bleBuffer.split('\n');
+
+                state.bleBuffer = lines.pop() || "";
+
+                lines.forEach(line => processBLELine(line.trim()));
+
+            });
+
+            state.bleConnected = true;
+
+            $('status-bt').className = "badge online";
+
+            $('status-bt').textContent = "BT Connected";
+
+            log("BLE Connected!", "green");
+
+        } catch (e) { log("BLE Error: " + e.message, "red"); }
+
+    }
+
+
+
+    function processBLELine(txt) {
+
+        if (!txt.includes(',')) return;
+
+        const [key, val] = txt.split(',');
+
+        const numVal = parseFloat(val);
+
+        
+
+        if (key === "Relay") updateRelayUI(numVal === 1);
+
+        if (key === "jarak") updateSensorUI("jarak", numVal);
+
+        if (key === "jarak_manual") updateSensorUI("jarak_manual", numVal);
+
+        if (key === "temp") updateSensorUI("temp", numVal);
+
+        if (key === "hum") updateSensorUI("hum", numVal);
+
+        
+
+        // Sync ke Firebase jika terhubung
+
+        if (state.db) {
+
+            update(ref(state.db, `${state.path}/${key}`), { value: numVal });
+
+        }
+
+    }
+
+
+
+    async function sendBLE(key, val) {
+
+        if (!state.rxChar) return;
+
+        await state.rxChar.writeValue(new TextEncoder().encode(`${key},${val}\n`));
+
+    }
+
+
+
+    // --- Firebase Logic (Sama Persis) ---
+
+    async function connectFB() {
+
+        const apiKey = $('fb-apiKey').value;
+
+        const databaseURL = $('fb-dbUrl').value;
+
+        try {
+
+            const app = initializeApp({ apiKey, databaseURL }, "ShaunGarden");
+
+            state.db = getDatabase(app);
+
+            onValue(ref(state.db, state.path), (snap) => {
+
+                const d = snap.val();
+
+                if (d) {
+
+                    if (d.relay) updateRelayUI(d.relay.value === 1);
+
+                    if (d.jarak) updateSensorUI("jarak", d.jarak.value);
+
+                    if (d.jarak_manual) updateSensorUI("jarak_manual", d.jarak_manual.value);
+
+                }
+
+            });
+
+            $('status-fb').className = "badge online";
+
+            $('status-fb').textContent = "DB Synced";
+
+            log("Firebase Connected!", "green");
+
+        } catch (e) { log("FB Error: " + e.message, "red"); }
+
+    }
+
+
+
+    $('btn-connect-ble').onclick = connectBLE;
+
+    $('btn-connect-fb').onclick = connectFB;
+
+</script>
+
+</body>
+
+</html>
+
