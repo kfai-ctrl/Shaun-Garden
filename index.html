@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <style>
         :root {
             --bg-cream: #f6f3e4;
@@ -29,59 +30,85 @@
             flex-direction: column;
             align-items: center;
             overflow-x: hidden;
-            padding-bottom: 350px; 
+            padding-bottom: 300px; 
         }
 
-        /* ===== HEADER SECTION DENGAN GAMBAR BARU ===== */
+        /* ===== HEADER DENGAN GAMBAR SHAUN ===== */
         .header-container {
-            margin-top: 50px;
+            margin-top: 60px;
             position: relative;
             text-align: center;
             margin-bottom: 40px;
-            display: inline-block;
         }
         .logo-box {
             background-color: var(--garden-green);
             color: white;
-            padding: 15px 70px;
+            padding: 12px 60px;
             border-radius: 60px;
             border: 5px solid #417d56;
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 900;
             display: inline-block;
             box-shadow: 0 5px 0px #326143;
             position: relative;
             z-index: 2;
         }
-        /* GAMBAR YANG KAMU MINTA */
+        /* Gambar Shaun di Kanan Atas Logo */
         .shaun-img {
             position: absolute;
-            right: -55px; /* Mengatur posisi ke kanan */
-            top: -45px;   /* Mengatur posisi ke atas */
-            width: 130px; /* Ukuran gambar */
-            z-index: 5;   /* Agar muncul di atas logo */
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            right: -45px;
+            top: -55px;
+            width: 120px;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* ===== MAIN LAYOUT ===== */
+        /* ===== LAYOUT UTAMA ===== */
         .wrapper {
             width: 95%;
-            max-width: 1200px;
+            max-width: 1100px;
             display: grid;
-            grid-template-columns: 2.2fr 1fr;
+            grid-template-columns: 2fr 1fr;
             gap: 20px;
-            z-index: 10;
+            z-index: 15;
         }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
-            border: 1.5px solid rgba(255,255,255,0.9);
             border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
         }
 
-        .section-label {
-            font-weight: 800;
-            font-size: 1.3rem;
-            margin
+        .section-label { font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+
+        /* SENSOR CARDS */
+        .sensor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .sensor-item {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+        }
+        .sensor-item::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 60px; height: 60px; background: #e1eed4;
+            border-radius: 0 0 0 100%;
+        }
+        .sensor-header { font-size: 0.75rem; font-weight: 800; color: var(--garden-green-dark); margin-bottom: 10px; }
+        .sensor-value { font-size: 2rem; font-weight: 900; color: var(--garden-green-dark); margin-top: 20px; }
+        .sensor-unit { font-size: 0.9rem; color: #888; }
+
+        /* CONTROLS */
+        .control-panel { display: flex; flex-direction: column; gap: 20px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; }
+        .btn-on { background: var(--garden-green); color: white; }
+        .btn-off { background: #ddd; color: #666; }
+
+        /* DEKORASI PETERNAKAN */
+        .farm-footer { position: fixed
