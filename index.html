@@ -75,6 +75,7 @@
 <main class="container mx-auto px-4 max-w-5xl mt-8 space-y-6">
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
         <div class="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-orange-100">
             <div class="flex items-center gap-2 mb-4">
                 <i class="ph-fill ph-cloud text-gg-orange text-2xl"></i>
@@ -191,10 +192,11 @@
             </div>
 
             <div class="w-full flex flex-col items-center justify-center gap-8">
+
                 <div id="relay-blob" class="bg-gg-pink-light border-[6px] border-gg-pink blob-relay w-64 h-56 flex flex-col items-center justify-center p-6 shadow-sm hover:scale-105 transition-all duration-300">
                     <h3 class="text-2xl text-gg-pink font-bold">Relay</h3>
                     <i id="relay-icon" class="ph-fill ph-lightning text-yellow-400 text-5xl my-2 drop-shadow-md"></i>
-                    <p class="text-[10px] text-pink-500 font-bold text-center mb-3">Pin P13 – Pump Control</p>
+                    <p class="text-[10px] text-pink-500 font-bold text-center mb-3">Pin P13 – Pump On/Off control</p>
                     <button id="btn-relay"
                         class="bg-gg-pink hover:bg-[#d63860] text-white font-bold py-2 px-8 rounded-full shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
                         onclick="toggleRelay()" disabled>
@@ -202,29 +204,37 @@
                     </button>
                 </div>
 
-                <div class="bg-gg-orange-light border-[6px] border-gg-orange blob-suhu w-64 h-56 flex flex-col items-center justify-center p-6 shadow-sm opacity-50">
-                    <h3 class="text-2xl text-gg-orange font-bold">Status</h3>
-                    <div class="my-3 bg-white/50 rounded-full p-2 border-2 border-orange-300">
-                        <i class="ph-fill ph-check-circle text-orange-500 text-4xl"></i>
+                <div class="bg-gg-orange-light border-[6px] border-gg-orange blob-suhu w-64 h-56 flex flex-col items-center justify-center p-6 shadow-sm hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-2xl text-gg-orange font-bold">System</h3>
+                    <div class="my-3 bg-white/50 rounded-full p-2 border-2 border-orange-300 shadow-inner">
+                        <i class="ph-fill ph-cpu text-orange-500 text-4xl"></i>
                     </div>
-                    <div class="text-orange-800 text-sm font-bold">SYSTEM ACTIVE</div>
+                    <div class="flex items-center gap-2 bg-white/60 py-1 px-4 rounded-xl border border-orange-200">
+                        <span id="val-status" class="text-orange-800 text-lg font-bold">ACTIVE</span>
+                    </div>
+                    <p class="text-[10px] text-orange-400 font-bold text-center mt-2">Connected & Monitoring</p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="bg-white rounded-full py-2 px-6 shadow-sm inline-flex items-center gap-2 w-full max-w-[300px]">
+        <i class="ph-bold ph-chart-line-up text-blue-400"></i>
+        <h2 class="text-lg text-blue-400 font-bold">History Charts</h2>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 h-64 flex flex-col">
             <div class="flex items-center gap-2 mb-4 text-gg-pink">
                 <i class="ph-fill ph-ruler"></i>
-                <h3 class="font-bold">Ultrasonic 1 History</h3>
+                <h3 class="font-bold">Ultrasonic 1 – Distance (cm)</h3>
             </div>
             <div class="flex-1 min-h-0"><canvas id="chart-jarak"></canvas></div>
         </div>
         <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 h-64 flex flex-col">
             <div class="flex items-center gap-2 mb-4 text-gg-orange">
                 <i class="ph-fill ph-sliders-horizontal"></i>
-                <h3 class="font-bold">Ultrasonic 2 History</h3>
+                <h3 class="font-bold">Ultrasonic 2 – Bucket Level (cm)</h3>
             </div>
             <div class="flex-1 min-h-0"><canvas id="chart-jarak-manual"></canvas></div>
         </div>
@@ -236,25 +246,26 @@
                 <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
                 <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
                 <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-                <span class="ml-4 terminal-font text-xs text-[#ff5f56] font-bold tracking-wider lowercase">system_terminal</span>
+                <span class="ml-4 terminal-font text-xs text-[#ff5f56] font-bold tracking-wider lowercase">system_terminal – garden_gotchi</span>
             </div>
-            <button id="btnClearLog" class="border border-[#ff5f56] text-[#ff5f56] hover:bg-[#ff5f56] hover:text-white transition rounded-full px-4 py-1 text-xs font-bold">
-                Clear
+            <button id="btnClearLog" class="border border-[#ff5f56] text-[#ff5f56] hover:bg-[#ff5f56] hover:text-white transition rounded-full px-4 py-1 text-xs font-bold flex items-center gap-1">
+                <i class="ph-bold ph-trash"></i> Clear
             </button>
         </div>
         <div id="terminal-content" class="terminal-font bg-[#050f09] rounded-2xl h-48 p-4 text-[10px] sm:text-xs text-[#27c93f] overflow-y-auto">
         </div>
     </div>
+
 </main>
 
 <script type="module">
 import { initializeApp, getApps, deleteApp }      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
-// ── CONFIG & STATE ───────────────────────────────────────────────────
+// ── LOGIC STATE ────────────────────────────────────────────────────────
 const SVC = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
-const TX  = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'; // Microbit -> Web
-const RX  = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'; // Web -> Microbit
+const TX  = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'; // Microbit -> Web (Listen)
+const RX  = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'; // Web -> Microbit (Write)
 
 const S = {
     device: null, rxChar: null, bleBuffer: '',
@@ -265,20 +276,21 @@ const S = {
 };
 const $ = id => document.getElementById(id);
 
-// ── LOGGING ─────────────────────────────────────────────────────────
+// ── TERMINAL LOG ──────────────────────────────────────────────────────
 function log(msg, color = '#27c93f') {
     const term = $('terminal-content');
     const line = document.createElement('div');
     line.style.color = color;
+    line.className = 'opacity-90 py-0.5 terminal-font';
     line.textContent = `[${new Date().toLocaleTimeString()}] > ${msg}`;
     term.appendChild(line);
     term.scrollTop = term.scrollHeight;
 }
 
-// ── BLE COMMUNICATIONS ──────────────────────────────────────────────
+// ── BLUETOOTH LOGIC (IN: key:val | OUT: key,val) ──────────────────────
 async function connectBLE() {
     try {
-        log('Scanning...', '#ffbd2e');
+        log('Searching for Garden Gotchi...', '#ffbd2e');
         S.device = await navigator.bluetooth.requestDevice({
             filters: [{ namePrefix: 'BBC micro:bit' }],
             optionalServices: [SVC]
@@ -287,18 +299,20 @@ async function connectBLE() {
         const service = await server.getPrimaryService(SVC);
         S.rxChar = await service.getCharacteristic(RX);
         const txChar = await service.getCharacteristic(TX);
+        
         await txChar.startNotifications();
         txChar.addEventListener('characteristicvaluechanged', (e) => {
             S.bleBuffer += new TextDecoder().decode(e.target.value);
             const lines = S.bleBuffer.split('\n');
             S.bleBuffer = lines.pop() ?? '';
             lines.forEach(l => {
-                const parts = l.trim().split(':');
+                const parts = l.trim().split(':'); // PROTOCOL IN: key:value
                 if(parts.length === 2) handleIncoming(parts[0], parts[1]);
             });
         });
+
         setBLEStatus(true);
-        log('Bluetooth Connected!', '#27c93f');
+        log('Connected to Micro:bit ✅');
     } catch (e) { log('Error: ' + e.message, '#ff5f56'); }
 }
 
@@ -334,48 +348,64 @@ function handleIncoming(key, val) {
 
 async function sendBLE(key, val) {
     if (!S.rxChar) return;
-    const payload = `${key},${val}\n`;
+    const payload = `${key},${val}\n`; // PROTOCOL OUT: key,value
     await S.rxChar.writeValue(new TextEncoder().encode(payload));
     log(`TX -> ${payload.trim()}`, '#ffff66');
 }
 
-// ── UI CONTROLS ─────────────────────────────────────────────────────
+// ── UI CONTROLS ──────────────────────────────────────────────────────
 window.setMode = function(mode) {
-    const val = mode === 'auto' ? 1 : 0;
+    const val = (mode === 'auto') ? 1 : 0;
     sendBLE('mode', val);
     applyModeUI(mode);
 };
 
 function applyModeUI(mode) {
     S.mode = mode;
-    const isAuto = mode === 'auto';
-    const active = 'bg-[#c2f29b] text-green-800 font-bold py-2 px-6 rounded-full shadow-sm flex items-center gap-2';
-    const inactive = 'text-green-700 font-bold py-2 px-6 rounded-full hover:bg-[#a6db7b] flex items-center gap-2';
+    const isAuto = (mode === 'auto');
+    const active = 'bg-[#c2f29b] text-green-800 font-bold py-2 px-6 rounded-full shadow-sm flex items-center gap-2 transition';
+    const inactive = 'text-green-700 font-bold py-2 px-6 rounded-full hover:bg-[#a6db7b] flex items-center gap-2 transition';
     $('btn-auto').className = isAuto ? active : inactive;
     $('btn-manual').className = !isAuto ? active : inactive;
     $('btn-relay').disabled = isAuto;
 }
 
 window.toggleRelay = function() {
+    if(S.mode === 'auto') return;
     const next = !S.relay ? 1 : 0;
     sendBLE('Relay', next);
+    // Optimistic Update
     applyRelayUI(!S.relay);
 };
 
 function applyRelayUI(isOn) {
     S.relay = isOn;
     const btn = $('btn-relay');
+    const icon = $('relay-icon');
+    const blob = $('relay-blob');
+
     btn.textContent = isOn ? 'On' : 'Off';
-    btn.className = isOn ? 'bg-green-500 text-white font-bold py-2 px-8 rounded-full shadow-md' : 'bg-gg-pink text-white font-bold py-2 px-8 rounded-full shadow-md';
-    $('relay-icon').className = isOn ? 'ph-fill ph-lightning text-yellow-400 text-5xl my-2 animate-pulse' : 'ph-fill ph-lightning text-yellow-400 text-5xl my-2';
-    $('relay-blob').className = isOn ? 'bg-gg-pink-light border-[6px] border-gg-pink blob-relay w-64 h-56 flex flex-col items-center justify-center p-6 relay-on' : 'bg-gg-pink-light border-[6px] border-gg-pink blob-relay w-64 h-56 flex flex-col items-center justify-center p-6';
+    if (isOn) {
+        btn.classList.replace('bg-gg-pink', 'bg-green-500');
+        icon.classList.add('animate-pulse');
+        blob.classList.add('relay-on');
+    } else {
+        btn.classList.replace('bg-green-500', 'bg-gg-pink');
+        icon.classList.remove('animate-pulse');
+        blob.classList.remove('relay-on');
+    }
 }
 
-// ── CHARTS & FIREBASE ───────────────────────────────────────────────
+// ── CHARTS & FIREBASE ────────────────────────────────────────────────
 function initCharts() {
     const cfg = (color) => ({
-        type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: color, fill: true, tension: 0.4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+        type: 'line', 
+        data: { labels: [], datasets: [{ data: [], borderColor: color, backgroundColor: color+'22', fill: true, tension: 0.4, pointRadius: 0 }] },
+        options: { 
+            responsive: true, maintainAspectRatio: false, 
+            plugins: { legend: { display: false } }, 
+            scales: { x: { display: false }, y: { grid: { color: '#f0f0f0' }, ticks: { font: { family: 'Balsamiq Sans' } } } } 
+        }
     });
     S.charts['jarak'] = new Chart($('chart-jarak'), cfg('#ec4a74'));
     S.charts['jarak_manual'] = new Chart($('chart-jarak-manual'), cfg('#fea268'));
@@ -383,6 +413,7 @@ function initCharts() {
 
 function updateChart(key, val) {
     const h = S.history[key];
+    if(!h) return;
     h.labels.push(''); h.data.push(val);
     if(h.labels.length > 20) { h.labels.shift(); h.data.shift(); }
     S.charts[key].data.labels = h.labels;
@@ -391,29 +422,35 @@ function updateChart(key, val) {
 }
 
 async function connectFB() {
-    const apiKey = $('fb-apiKey').value;
-    const dbUrl = $('fb-dbUrl').value;
+    const apiKey = $('fb-apiKey').value.trim();
+    const dbUrl = $('fb-dbUrl').value.trim();
+    const path = $('fb-path').value.trim();
     if(!apiKey || !dbUrl) return alert('API Key & URL Required');
     try {
         const app = initializeApp({ apiKey, databaseURL: dbUrl });
         S.db = getDatabase(app);
+        S.fbPath = path;
         onValue(ref(S.db, S.fbPath), snap => {
             const d = snap.val();
-            if(d) Object.keys(d).forEach(k => handleIncoming(k, String(d[k].value ?? d[k])));
+            if(d) Object.keys(d).forEach(k => {
+                const val = (typeof d[k] === 'object') ? d[k].value : d[k];
+                handleIncoming(k, String(val));
+            });
         });
-        log('Firebase Connected!');
-    } catch(e) { log('FB Error: ' + e.message); }
+        log('Firebase Connected! ☁️');
+    } catch(e) { log('FB Error: ' + e.message, '#ff5f56'); }
 }
 
-// ── INIT ────────────────────────────────────────────────────────────
+// ── EVENT LISTENERS ──────────────────────────────────────────────────
 $('btn-connect-ble').onclick = connectBLE;
+$('btn-disconnect-ble').onclick = () => { if(S.device) S.device.gatt.disconnect(); setBLEStatus(false); };
 $('btn-connect-fb').onclick = connectFB;
 $('btnClearLog').onclick = () => { $('terminal-content').innerHTML = ''; };
 
 window.onload = () => {
     initCharts();
     applyModeUI('auto');
-    log('System Ready 🌱');
+    log('Garden Gotchi Ready 🌱');
 };
 </script>
 </body>
