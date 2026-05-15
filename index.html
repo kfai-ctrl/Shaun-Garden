@@ -85,6 +85,7 @@
 
         .sensor-grid {
             display: grid;
+            /* Berubah menjadi 2 kolom karena Ultrasonik 2 dihapus */
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
@@ -118,9 +119,8 @@
         .status-box { text-align: center; }
         .bolt-icon {
             font-size: 4.2rem;
-            color: #ddd; /* Default OFF */
+            color: var(--accent-yellow);
             margin: 15px 0;
-            transition: color 0.3s;
         }
         .relay-title { font-weight: 900; font-size: 1.35rem; letter-spacing: 1px; }
         .relay-desc { font-size: 0.75rem; color: #888; margin-top: 8px; }
@@ -156,4 +156,261 @@
         }
         #config-menu label { font-weight: 700; color: var(--garden-green-dark); display: block; margin-top: 8px; }
 
-        .badge-status { position: fixed; top: 20px; right: 20px; z-index: 100
+        .badge-status { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 5px; }
+        .badge { background: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid #ddd; }
+        .badge.online { color: green; border-color: green; }
+
+        .farm-footer {
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            height: 260px;
+            z-index: 1; 
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .barn {
+            position: absolute; 
+            bottom: 85px; 
+            left: 50%;
+            transform: translateX(-50%); 
+            width: 170px; 
+            z-index: 5;
+        }
+        .road { 
+            position: absolute; 
+            bottom: 40px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 380px; 
+            height: 90px; 
+            background: #eed18b; 
+            clip-path: polygon(20% 100%, 80% 100%, 58% 30%, 42% 30%); 
+            z-index: 3;
+        }
+        .fence { 
+            position: absolute; 
+            bottom: 70px; 
+            width: 100%; 
+            height: 55px; 
+            background-image: repeating-linear-gradient(90deg, #96613d, #96613d 14px, transparent 14px, transparent 28px); 
+            border-top: 8px solid #7a4a2d; 
+            z-index: 4;
+        }
+        .grass-layer { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            height: 110px; 
+            background: #86bc42; 
+            z-index: 2; 
+            border-radius: 50% 50% 0 0 / 40px 40px 0 0; 
+        }
+
+        @media (max-width: 900px) {
+            .wrapper { grid-template-columns: 1fr; }
+            .sensor-grid { grid-template-columns: 1fr; }
+            body { padding-bottom: 320px; }
+            .shaun-img { width: 85px; right: -35px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="badge-status">
+    <div class="badge" id="status-bt">BT Offline</div>
+    <div class="badge" id="status-fb">DB Offline</div>
+</div>
+
+<button class="config-toggle" onclick="toggleSettings()">⚙️ Settings</button>
+
+<div id="config-menu">
+    <label>Firebase API Key</label>
+    <input type="password" id="fb-apiKey">
+    <label>Database URL</label>
+    <input type="text" id="fb-dbUrl">
+    <label>Node Path</label>
+    <input type="text" id="fb-path" value="smarthome/ruangan1">
+    <button class="btn-action btn-on" id="btn-connect-fb" style="width:100%; margin:10px 0 5px;">Connect Cloud</button>
+    <hr>
+    <button class="btn-action btn-on" id="btn-connect-ble" style="width:100%;">Connect Micro:bit</button>
+    <button class="btn-action btn-off" id="btn-disconnect-ble" style="width:100%; display:none;">Disconnect BLE</button>
+    <div id="terminalLog" style="font-size: 9px; height: 70px; overflow-y: auto; background: #f0f0f0; margin-top: 12px; padding: 6px; border-radius:8px; font-family: 'Space Mono';"></div>
+</div>
+
+<div class="header-container">
+    <div class="logo-box">Shaun garden</div>
+    <img src="https://raw.githubusercontent.com/kfai-ctrl/Shaun-Garden/refs/heads/main/Vector%2078.png" class="shaun-img" alt="Shaun">
+</div>
+
+<div class="wrapper">
+    <div class="glass-card">
+        <div class="section-label"><i class="fas fa-seedling" style="color: #4a7a5a;"></i> Live Sensor Data</div>
+        <div class="sensor-grid">
+            <div class="sensor-item">
+                <div class="sensor-header"><i class="fas fa-tint" style="color: #3a86ff;"></i> Ultrasonik 1 - P0 / P1</div>
+                <div class="sensor-emoji">💧</div>
+                <div class="sensor-value" id="val-jarak">--<span class="sensor-unit">cm</span></div>
+                <div class="sensor-footer">Pompa Relay ON jika jarak ≥ 30 cm</div>
+            </div>
+            <div class="sensor-item">
+                <div class="sensor-header"><i class="fas fa-thermometer-half" style="color: #e63946;"></i> DHT22 - SUHU / HUMIDITY</div>
+                <div class="sensor-emoji">🌡️</div>
+                <div class="sensor-value" style="font-size: 1.6rem;">
+                    <span id="val-temp">--</span>°C <span id="val-hum">--</span>%
+                </div>
+                <div class="sensor-footer">Monitoring suhu dan kelembapan</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <div class="glass-card status-box">
+            <div class="section-label" style="justify-content: center;"><i class="fas fa-bolt"></i> STATUS POMPA</div>
+            <div class="bolt-icon"><i class="fas fa-bolt"></i></div>
+            <div class="relay-title" id="lbl-relay">RELAY OFF</div>
+            <div class="relay-desc">Pin P13 - Kontrol pompa secara otomatis/manual</div>
+        </div>
+
+        <div class="glass-card status-box">
+            <div class="section-label" style="justify-content: center;"><i class="fas fa-tools"></i> MANUAL CONTROL</div>
+            <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 12px;">Kontrol pompa secara manual</p>
+            <div class="btn-group">
+                <button class="btn-action btn-on" onclick="manualRelay(1)">ON</button>
+                <button class="btn-action btn-off" onclick="manualRelay(0)">OFF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="farm-footer">
+    <div class="barn">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20,180 L20,80 L100,20 L180,80 L180,180 Z" fill="#cf2e2e" stroke="#222" stroke-width="2"/>
+            <rect x="75" y="110" width="50" height="70" fill="#fff" stroke="#222" stroke-width="2"/>
+            <line x1="75" y1="110" x2="125" y2="180" stroke="#cf2e2e" stroke-width="2"/>
+            <line x1="125" y1="110" x2="75" y2="180" stroke="#cf2e2e" stroke-width="2"/>
+            <rect x="85" y="45" width="30" height="25" fill="#fbd333" stroke="#222" stroke-width="2"/>
+        </svg>
+    </div>
+    <div class="road"></div>
+    <div class="fence"></div>
+    <div class="grass-layer"></div>
+</div>
+
+<script type="module">
+import { initializeApp, getApps, deleteApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+const S = {
+    db: null, fbPath: "smarthome/ruangan1",
+    device: null, rxChar: null, bleBuffer: '',
+    relay: false
+};
+
+const $ = id => document.getElementById(id);
+
+function log(msg, color = "#000") {
+    const t = new Date().toLocaleTimeString();
+    const logEl = $('terminalLog');
+    logEl.insertAdjacentHTML('afterbegin', `<div style="color:${color}">[${t}] ${msg}</div>`);
+    if (logEl.children.length > 50) logEl.removeChild(logEl.lastChild);
+}
+
+const SVC = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+const TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+const RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+
+async function connectBLE() {
+    try {
+        log("Scanning micro:bit...", "blue");
+        S.device = await navigator.bluetooth.requestDevice({ filters: [{ namePrefix: "BBC micro:bit" }], optionalServices: [SVC] });
+        const server = await S.device.gatt.connect();
+        const service = await server.getPrimaryService(SVC);
+        S.rxChar = await service.getCharacteristic(RX);
+        const txChar = await service.getCharacteristic(TX);
+        await txChar.startNotifications();
+        txChar.addEventListener("characteristicvaluechanged", e => {
+            S.bleBuffer += new TextDecoder().decode(e.target.value);
+            const lines = S.bleBuffer.split('\n');
+            S.bleBuffer = lines.pop() || '';
+            lines.forEach(line => processLine(line.trim()));
+        });
+        $('status-bt').className = "badge online";
+        $('status-bt').textContent = "BT Connected";
+        log("BLE Connected!", "green");
+    } catch (e) { log("BLE Error: " + e.message, "red"); }
+}
+
+function processLine(txt) {
+    if (!txt.includes(':')) return;
+    const [key, val] = txt.split(':');
+    const num = parseFloat(val);
+
+    if (key === "jarak") $('val-jarak').innerHTML = `${num}<span class="sensor-unit">cm</span>`;
+    // Logika pengisian teks jarak_manual dihilangkan karena elemen ID nya sudah tidak ada
+    if (key === "suhu" || key === "temp") $('val-temp').textContent = num;
+    if (key === "hum") $('val-hum').textContent = num;
+    if (key === "Relay") updateRelayUI(num === 1);
+
+    if (S.db) update(ref(S.db, `${S.fbPath}/${key}`), { value: num || val });
+}
+
+async function sendBLE(key, val) {
+    if (!S.rxChar) return log("BLE belum terhubung", "red");
+    await S.rxChar.writeValue(new TextEncoder().encode(`${key},${val}\n`));
+}
+
+function updateRelayUI(isOn) {
+    S.relay = isOn;
+    $('lbl-relay').textContent = isOn ? 'RELAY ON' : 'RELAY OFF';
+    document.querySelector('.bolt-icon').style.color = isOn ? 'var(--accent-yellow)' : '#ddd';
+}
+
+window.manualRelay = (val) => {
+    updateRelayUI(val === 1);
+    sendBLE("Relay", val);
+    if (S.db) update(ref(S.db, `${S.fbPath}/Relay`), { value: val });
+    log(`Manual Relay ${val ? 'ON' : 'OFF'}`, "green");
+};
+
+async function connectFB() {
+    const apiKey = $('fb-apiKey').value.trim();
+    const databaseURL = $('fb-dbUrl').value.trim();
+    const path = $('fb-path').value.trim() || S.fbPath;
+    if (!apiKey || !databaseURL) return alert("Isi API Key dan Database URL!");
+
+    try {
+        if (getApps().length) await deleteApp(getApps()[0]);
+        const app = initializeApp({ apiKey, databaseURL });
+        S.db = getDatabase(app);
+        S.fbPath = path;
+
+        onValue(ref(S.db, path), snap => {
+            const d = snap.val();
+            if (!d) return;
+            if (d.jarak) $('val-jarak').innerHTML = `${d.jarak.value}<span class="sensor-unit">cm</span>`;
+            // Sinkronisasi data jarak_manual dari cloud dihentikan di UI
+            if (d.suhu) $('val-temp').textContent = d.suhu.value;
+            if (d.hum) $('val-hum').textContent = d.hum.value;
+            if (d.Relay !== undefined) updateRelayUI(d.Relay.value === 1);
+        });
+        $('status-fb').className = "badge online";
+        $('status-fb').textContent = "DB Synced";
+        log("Firebase Connected!", "green");
+    } catch (e) { log("FB Error: " + e.message, "red"); }
+}
+
+window.toggleSettings = () => {
+    const m = $('config-menu');
+    m.style.display = m.style.display === 'block' ? 'none' : 'block';
+};
+
+$('btn-connect-ble').onclick = connectBLE;
+$('btn-disconnect-ble').onclick = () => S.device && S.device.gatt.disconnect();
+$('btn-connect-fb').onclick = connectFB;
+
+log("Shaun Garden siap 🌱", "green");
+</script>
+</body>
+</html>
